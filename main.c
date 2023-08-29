@@ -33,9 +33,8 @@ int main()
     update_points(i_win, 0);
     wrefresh(i_win);
 
-    // Game loopo
-    char input = '@';
-    char old_input = 'X';
+    // Game loop
+    char input;
     while (input != 'q')
     {
         // Timeout will depend on direction moving, X is set faster because Y is 
@@ -66,17 +65,12 @@ int main()
         }
 
         // wgetch will timeout if nothing is pressed, returning an ERR
-        old_input = input;
         input = wgetch(g_win);
 
         if (input == ERR)
         {
             move_snake(g_win, &state, &snake);
             wrefresh(g_win);
-            continue;
-        }
-        else if (input == old_input) // Temporary fix for pressed down key
-        {
             continue;
         }
 
