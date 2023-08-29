@@ -38,7 +38,8 @@ int move_snake(WINDOW *win, GameState *state, Snake *snake)
                 row = 1;
         if (col == 0)
                 col = max_x - 2;
-        if (col == max_x - 1) {
+        if (col == max_x - 1)
+        {
                 col = 1;
         }
 
@@ -81,7 +82,20 @@ void spawn_food(WINDOW *win)
         int max_x = getmaxx(win);
         int max_y = getmaxy(win);
 
-        // -2 to avoid spawning on border
+        int ran_x, ran_y;
+
+        // Make sure it doesn't spawn on the snake
+        bool valid = false;
+        while (!valid)
+        {
+                // -2 to avoid spawning on border
+                ran_y = ran_num(max_y - 2);
+                ran_x = ran_num(max_x - 2);
+
+                char spot = mvwinch(win, ran_y, ran_x);
+                if (spot != BODY_CHAR)
+                        valid = true;
+        }
         mvwaddch(win, ran_num(max_y - 2), ran_num(max_x - 2), FOOD_CHAR);
 }
 
