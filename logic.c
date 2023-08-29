@@ -71,7 +71,7 @@ int move_snake(WINDOW *win, GameState *state, Snake *snake)
 
 int ran_num(int upper)
 {
-        int lower = 1;
+        int lower = 1; // Don't spawn on border
         int num = (rand() % (upper - lower + 1)) + lower;
         return num;
 }
@@ -81,7 +81,8 @@ void spawn_food(WINDOW *win)
         int max_x = getmaxx(win);
         int max_y = getmaxy(win);
 
-        mvwaddch(win, ran_num(max_y - 1), ran_num(max_x - 1), FOOD_CHAR);
+        // -2 to avoid spawning on border
+        mvwaddch(win, ran_num(max_y - 2), ran_num(max_x - 2), FOOD_CHAR);
 }
 
 int set_dir(Snake *snake, char input)
