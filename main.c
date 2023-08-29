@@ -10,6 +10,8 @@
 #define TIMEOUTY 90
 
 void update_points(WINDOW *win, int points);
+void handle_gamespeed(WINDOW *g_win, Snake *snake);
+void handle_gamestate(WINDOW *g_win, WINDOW *i_win, GameState *state);
 
 int main()
 {
@@ -37,36 +39,13 @@ int main()
     char input;
     while (input != 'q')
     {
-        // Timeout will depend on direction moving, X is set faster because Y is 
+        // Timeout will depend on direction moving, X is set faster because Y is
         // naturally faster
-        Dir cur_dir = snake.dir;
-        if (cur_dir == Up || cur_dir == Down)
-        {
-            wtimeout(g_win, TIMEOUTY);
-        }
-        else
-        {
-            wtimeout(g_win, TIMEOUTX);
-        }
-
-        // Check game state and respond accordingly
-        if (state.died == true)
-        {
-            mvwaddstr(g_win, LINES / 2, COLS / 2, "YOU HAVE DIED");
-        }
-        else if (state.ate)
-        {
-            state.ate = false;
-            state.points++;
-            update_points(i_win, state.points);
-            spawn_food(g_win);
-            wrefresh(g_win);
-            wrefresh(i_win);
-        }
+        handle_gamespeed(g_win, &snake);
+        handle_gamestate(g_win, i_win, &state);
 
         // wgetch will timeout if nothing is pressed, returning an ERR
         input = wgetch(g_win);
-
         if (input == ERR)
         {
             move_snake(g_win, &state, &snake);
@@ -85,9 +64,40 @@ int main()
     return 0;
 }
 
-void update_points(WINDOW *win, int points) {
+void update_points(WINDOW *win, int points)
+{
     char str[10];
     sprintf(str, "Score: %d", points);
 
     mvwprintw(win, 1, 2, str);
+}
+
+void handle_gamespeed(WINDOW *g_win, Snake *snake) {
+        Dir cur_dir = snake->dir;
+        if (cur_dir == Up || cur_dir == Down)
+        {
+            wtimeout(g_win, TIMEOUTY);
+        }
+        else
+        {
+            wtimeout(g_win, TIMEOUTX);
+        }
+}
+
+
+void handle_gamestate(WINDOW *g_win, WINDOW *i_win, GameState *state)
+{
+    if (state->died)
+    {
+        mvwaddstr(g_win, LINES / 2, COLS / 2, "YOU HAVE DIED"); // TODO: center and add restart option
+    }
+    else if (state->ate)
+    {
+        state->ate = false;
+        state->points++;
+        update_points(i_win, state->points);
+        spawn_food(g_win);
+        wrefresh(g_win);
+        wrefresh(i_win);
+    }
 }
