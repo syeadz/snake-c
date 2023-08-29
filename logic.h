@@ -9,6 +9,9 @@
 #define FOOD_CHAR 'O'
 #define FOOD_COL COLOR_YELLOW
 
+#define TIMEOUTX 50
+#define TIMEOUTY 90
+
 #include <ncurses.h>
 
 #include "linked_list.h"
