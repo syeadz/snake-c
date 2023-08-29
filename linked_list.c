@@ -2,6 +2,9 @@
 
 #include <stdlib.h>
 
+/**
+ * Allocates and initializes a new Node with given row and col.
+*/
 Node *init_node(int row, int col)
 {
     Node *new_node = (Node *)malloc(sizeof(Node));

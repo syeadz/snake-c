@@ -1,5 +1,8 @@
 #include "tui.h"
 
+/**
+ * Creates a new window based on parameters.
+*/
 WINDOW *create_newwin(int height, int width, int starty, int startx)
 {
     WINDOW *local_win;

@@ -2,7 +2,7 @@
 
 #include <stdlib.h>
 
-int move_snake(WINDOW *win, State *state, Snake *snake)
+int move_snake(WINDOW *win, GameState *state, Snake *snake)
 {
         // head
         int row = snake->body->head->row;
