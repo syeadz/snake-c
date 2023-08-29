@@ -12,24 +12,23 @@
 // Function prototypes
 /**
  * Updates the points shown on screen.
-*/
+ */
 void update_points(WINDOW *win, int points);
 
 /**
  * Handles timeout for character input.
-*/
+ */
 void handle_gamespeed(WINDOW *win, Snake *snake);
 
 /**
  * Handles the state flags.
-*/
+ */
 void handle_gamestate(WINDOW *win, GameState *state);
 
 /**
  * Resets gamestate for a new game.
-*/
+ */
 void reset_gamestate(GameState *state, Snake *snake);
-
 
 int main()
 {
@@ -45,7 +44,7 @@ int main()
     // initialization of game
     WINDOW *win = init_game_win();
     GameState state = {.ate = false, .died = false, .points = 0};
-    Snake snake = {.body = init_list(LINES / 2, COLS / 2), .dir = Up};
+    Snake snake = {.body = init_list(LINES / 2 + 4, COLS / 2), .dir = Up};
     int high_score = 0;
     char input;
     char str[15];
@@ -56,7 +55,7 @@ loop:
     spawn_food(win);
     update_points(win, state.points);
     sprintf(str, "High Score: %d", high_score);
-    mvwprintw(win, 0, COLS / 2 - 4, str);
+    mvwprintw(win, 0, COLS / 2 + 5, str);
     wrefresh(win);
 
     while (input != 'q' && !state.died)
@@ -172,5 +171,5 @@ void reset_gamestate(GameState *state, Snake *snake)
 
     snake->dir = Up;
     free_list(snake->body);
-    snake->body = init_list(LINES / 2, COLS / 2);
+    snake->body = init_list(LINES / 2 + 4, COLS / 2);
 }
