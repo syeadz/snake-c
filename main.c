@@ -25,35 +25,43 @@ int main()
     while (input != 'q')
     {
         Dir cur_dir = snake.dir;
-        if (cur_dir == Up || cur_dir == Down) {
+        if (cur_dir == Up || cur_dir == Down)
+        {
             wtimeout(win, TIMEOUTY);
-        } else {
+        }
+        else
+        {
             wtimeout(win, TIMEOUTX);
         }
-
-        old_input = input;
-        input = wgetch(win);
-
-        if (input == ERR) {
-            move_snake(win, &state, &snake);
-            wrefresh(win);
-            continue;
-        } else if (input == old_input) {
-            continue;
-        }
-
-        set_dir(&snake, input);
-        move_snake(win, &state, &snake);
 
         // Handle state
         if (state.died == true)
         {
             mvwaddstr(win, LINES / 2, COLS / 2, "YOU HAVE DIED");
         }
-        else if (state.ate) {
+        else if (state.ate)
+        {
             state.ate = false;
             spawn_food(win);
         }
+
+        old_input = input;
+        input = wgetch(win);
+
+        if (input == ERR)
+        {
+            move_snake(win, &state, &snake);
+            wrefresh(win);
+            continue;
+        }
+        else if (input == old_input)
+        {
+            continue;
+        }
+
+        set_dir(&snake, input);
+        move_snake(win, &state, &snake);
+
         wrefresh(win);
     }
 
