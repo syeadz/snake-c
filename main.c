@@ -28,14 +28,19 @@ int main()
     WINDOW *win = init_game_win();
     GameState state = {.ate = false, .died = false, .points = 0};
     Snake snake = {.body = init_list(LINES / 2, COLS / 2), .dir = Up};
+    int high_score = 0;
+    char input;
+    char str[15];
+
+loop:
+    // Game loop
     move_snake(win, &state, &snake);
     spawn_food(win);
+    update_points(win, state.points);
+    sprintf(str, "High Score: %d", high_score);
+    mvwprintw(win, 0, COLS / 2 - 4, str);
     wrefresh(win);
-    update_points(win, 0);
-
-    // Game loop
-    char input;
-    while (input != 'q')
+    while (input != 'q' && !state.died)
     {
         // Timeout will depend on direction moving, X is set faster because Y is
         // naturally faster
@@ -57,6 +62,48 @@ int main()
         wrefresh(win);
     }
 
+    if (1)
+    {
+        wtimeout(win, 10000);
+        wclear(win);
+        box(win, 0, 0);
+
+        char str[15];
+        sprintf(str, "Score: %d", state.points);
+        mvwaddstr(win, LINES / 2 - 4, COLS / 2 - 9 / 2, str);
+
+        if (state.points > high_score)
+        {
+            high_score = state.points;
+            mvwaddstr(win, LINES / 2 - 2, COLS / 2 - 14 / 2, "New High Score!");
+        }
+
+        sprintf(str, "High Score: %d", high_score);
+        mvwaddstr(win, LINES / 2 - 3, COLS / 2 - 14 / 2, str);
+
+        mvwaddstr(win, LINES / 2, COLS / 2 - 8 / 2, "YOU LOSE");
+        mvwaddstr(win, LINES / 2 + 2, COLS / 2 - 17 / 2, "Press r to retry");
+        mvwaddstr(win, LINES / 2 + 3, COLS / 2 - 16 / 2, "Press q to quit");
+
+        wrefresh(win);
+        while (input != ERR)
+        {
+            input = wgetch(win);
+            if (input == 'r')
+            {
+                input = '@';
+                reset_gamestate(&state, &snake);
+                wclear(win);
+                box(win, 0, 0);
+                goto loop;
+            }
+            else if (input == 'q')
+            {
+                break;
+            }
+        }
+    }
+
     // End
     endwin();
     return 0;
@@ -64,38 +111,47 @@ int main()
 
 void update_points(WINDOW *win, int points)
 {
-    char str[10];
+    char str[15];
     sprintf(str, "Score: %d", points);
-
-    // mvwprintw(win, 1, 2, str);
-    mvwprintw(win, 0, COLS / 2 - 9, str);
+    mvwprintw(win, 0, COLS / 2 - 19, str);
 }
 
-void handle_gamespeed(WINDOW *win, Snake *snake) {
-        Dir cur_dir = snake->dir;
-        if (cur_dir == Up || cur_dir == Down)
-        {
-            wtimeout(win, TIMEOUTY);
-        }
-        else
-        {
-            wtimeout(win, TIMEOUTX);
-        }
+void handle_gamespeed(WINDOW *win, Snake *snake)
+{
+    Dir cur_dir = snake->dir;
+    if (cur_dir == Up || cur_dir == Down)
+    {
+        wtimeout(win, TIMEOUTY);
+    }
+    else
+    {
+        wtimeout(win, TIMEOUTX);
+    }
 }
-
 
 void handle_gamestate(WINDOW *win, GameState *state)
 {
     if (state->died)
     {
-        mvwaddstr(win, LINES / 2, COLS / 2 - 13, "YOU HAVE DIED"); // TODO: add restart option
     }
-    else if (state->ate)
+    if (state->ate)
     {
         state->ate = false;
         state->points++;
+
         update_points(win, state->points);
         spawn_food(win);
         wrefresh(win);
     }
+}
+
+void reset_gamestate(GameState *state, Snake *snake)
+{
+    state->ate = false;
+    state->died = false;
+    state->points = 0;
+
+    snake->dir = Up;
+    free_list(snake->body);
+    snake->body = init_list(LINES / 2, COLS / 2);
 }

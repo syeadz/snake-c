@@ -4,7 +4,7 @@
 
 /**
  * Allocates and initializes a new Node with given row and col.
-*/
+ */
 Node *init_node(int row, int col)
 {
     Node *new_node = (Node *)malloc(sizeof(Node));
@@ -51,4 +51,18 @@ void rem_last(DLinkedList *list)
     list->tail = cur_tail->next;
 
     free(cur_tail);
+}
+
+void free_list(DLinkedList *list)
+{
+    Node *node = list->tail;
+
+    while (node->next != NULL)
+    {
+        node = node->next;
+        free(node->prev);
+    }
+
+    free(node);
+    free(list);
 }
