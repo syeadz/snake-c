@@ -9,6 +9,8 @@
 #define TIMEOUTX 50
 #define TIMEOUTY 90
 
+void update_points(WINDOW *win, int points);
+
 int main()
 {
     // For randomization
@@ -21,12 +23,15 @@ int main()
     noecho();
 
     // initialization of game
-    WINDOW *win = init_game_win();
+    WINDOW *g_win = init_game_win();
+    WINDOW *i_win = init_info_win();
     GameState state = {.ate = false, .died = false, .points = 0};
     Snake snake = {.body = init_list(LINES / 2, COLS / 2), .dir = Up};
-    move_snake(win, &state, &snake);
-    spawn_food(win);
-    wrefresh(win);
+    move_snake(g_win, &state, &snake);
+    spawn_food(g_win);
+    wrefresh(g_win);
+    update_points(i_win, 0);
+    wrefresh(i_win);
 
     // Game loopo
     char input = '@';
@@ -38,32 +43,36 @@ int main()
         Dir cur_dir = snake.dir;
         if (cur_dir == Up || cur_dir == Down)
         {
-            wtimeout(win, TIMEOUTY);
+            wtimeout(g_win, TIMEOUTY);
         }
         else
         {
-            wtimeout(win, TIMEOUTX);
+            wtimeout(g_win, TIMEOUTX);
         }
 
         // Check game state and respond accordingly
         if (state.died == true)
         {
-            mvwaddstr(win, LINES / 2, COLS / 2, "YOU HAVE DIED");
+            mvwaddstr(g_win, LINES / 2, COLS / 2, "YOU HAVE DIED");
         }
         else if (state.ate)
         {
             state.ate = false;
-            spawn_food(win);
+            state.points++;
+            update_points(i_win, state.points);
+            spawn_food(g_win);
+            wrefresh(g_win);
+            wrefresh(i_win);
         }
 
         // wgetch will timeout if nothing is pressed, returning an ERR
         old_input = input;
-        input = wgetch(win);
+        input = wgetch(g_win);
 
         if (input == ERR)
         {
-            move_snake(win, &state, &snake);
-            wrefresh(win);
+            move_snake(g_win, &state, &snake);
+            wrefresh(g_win);
             continue;
         }
         else if (input == old_input) // Temporary fix for pressed down key
@@ -72,12 +81,19 @@ int main()
         }
 
         set_dir(&snake, input);
-        move_snake(win, &state, &snake);
+        move_snake(g_win, &state, &snake);
 
-        wrefresh(win);
+        wrefresh(g_win);
     }
 
     // End
     endwin();
     return 0;
+}
+
+void update_points(WINDOW *win, int points) {
+    char str[10];
+    sprintf(str, "Score: %d", points);
+
+    mvwprintw(win, 1, 2, str);
 }
