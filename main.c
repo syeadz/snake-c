@@ -80,45 +80,42 @@ loop:
         wrefresh(win);
     }
 
-    if (1) // End game screen
+    // End game screen
+    wtimeout(win, 10000);
+    wclear(win);
+    box(win, 0, 0);
+
+    sprintf(str, "Score: %d", state.points);
+    mvwaddstr(win, LINES / 2 - 4, COLS / 2 - 9 / 2, str);
+
+    if (state.points > high_score)
     {
-        wtimeout(win, 10000);
-        wclear(win);
-        box(win, 0, 0);
+        high_score = state.points;
+        mvwaddstr(win, LINES / 2 - 2, COLS / 2 - 14 / 2, "New High Score!");
+    }
 
-        char str[15];
-        sprintf(str, "Score: %d", state.points);
-        mvwaddstr(win, LINES / 2 - 4, COLS / 2 - 9 / 2, str);
+    sprintf(str, "High Score: %d", high_score);
+    mvwaddstr(win, LINES / 2 - 3, COLS / 2 - 14 / 2, str);
 
-        if (state.points > high_score)
+    mvwaddstr(win, LINES / 2, COLS / 2 - 8 / 2, "YOU LOSE");
+    mvwaddstr(win, LINES / 2 + 2, COLS / 2 - 17 / 2, "Press r to retry");
+    mvwaddstr(win, LINES / 2 + 3, COLS / 2 - 16 / 2, "Press q to quit");
+
+    wrefresh(win);
+    while (input != ERR)
+    {
+        input = wgetch(win);
+        if (input == 'r')
         {
-            high_score = state.points;
-            mvwaddstr(win, LINES / 2 - 2, COLS / 2 - 14 / 2, "New High Score!");
+            input = '@';
+            reset_gamestate(&state, &snake);
+            wclear(win);
+            box(win, 0, 0);
+            goto loop;
         }
-
-        sprintf(str, "High Score: %d", high_score);
-        mvwaddstr(win, LINES / 2 - 3, COLS / 2 - 14 / 2, str);
-
-        mvwaddstr(win, LINES / 2, COLS / 2 - 8 / 2, "YOU LOSE");
-        mvwaddstr(win, LINES / 2 + 2, COLS / 2 - 17 / 2, "Press r to retry");
-        mvwaddstr(win, LINES / 2 + 3, COLS / 2 - 16 / 2, "Press q to quit");
-
-        wrefresh(win);
-        while (input != ERR)
+        else if (input == 'q')
         {
-            input = wgetch(win);
-            if (input == 'r')
-            {
-                input = '@';
-                reset_gamestate(&state, &snake);
-                wclear(win);
-                box(win, 0, 0);
-                goto loop;
-            }
-            else if (input == 'q')
-            {
-                break;
-            }
+            break;
         }
     }
 
