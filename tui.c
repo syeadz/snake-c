@@ -15,14 +15,5 @@ WINDOW *create_newwin(int height, int width, int starty, int startx)
 
 WINDOW *init_game_win()
 {
-    return create_newwin(LINES - 2, COLS, 2, 0);
+    return create_newwin(LINES, COLS, 0, 0);
 }
-
-WINDOW *init_info_win()
-{
-    return create_newwin(3, COLS, 0, 0);
-}
-
-// void print_centered(WINDOW *win, char str[]) {
-//     int length = 
-// }
