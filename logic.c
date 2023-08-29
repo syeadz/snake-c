@@ -29,8 +29,19 @@ int move_snake(WINDOW *win, State *state, Snake *snake)
                 break;
         }
 
-        // TODO: check window bounds
-        // Check what the head is moving to
+        int max_x = getmaxx(win);
+        int max_y = getmaxy(win);
+
+        if (row == 0)
+                row = max_y - 2;
+        if (row == max_y - 1)
+                row = 1;
+        if (col == 0)
+                col = max_x - 2;
+        if (col == max_x - 1) {
+                col = 1;
+        }
+
         char moving_to = mvwinch(win, row, col);
         if (moving_to == BODY_CHAR)
         {
