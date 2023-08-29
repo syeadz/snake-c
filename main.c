@@ -9,9 +9,27 @@
 #define TIMEOUTX 50
 #define TIMEOUTY 90
 
+// Function prototypes
+/**
+ * Updates the points shown on screen.
+*/
 void update_points(WINDOW *win, int points);
+
+/**
+ * Handles timeout for character input.
+*/
 void handle_gamespeed(WINDOW *win, Snake *snake);
+
+/**
+ * Handles the state flags.
+*/
 void handle_gamestate(WINDOW *win, GameState *state);
+
+/**
+ * Resets gamestate for a new game.
+*/
+void reset_gamestate(GameState *state, Snake *snake);
+
 
 int main()
 {
@@ -40,6 +58,7 @@ loop:
     sprintf(str, "High Score: %d", high_score);
     mvwprintw(win, 0, COLS / 2 - 4, str);
     wrefresh(win);
+
     while (input != 'q' && !state.died)
     {
         // Timeout will depend on direction moving, X is set faster because Y is
@@ -62,7 +81,7 @@ loop:
         wrefresh(win);
     }
 
-    if (1)
+    if (1) // End game screen
     {
         wtimeout(win, 10000);
         wclear(win);
