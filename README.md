@@ -1,5 +1,7 @@
 # Snake in C
 
+<img src="screenshot.png">
+
 Snake written in C.
 
 Uses ncurses for TUI.
